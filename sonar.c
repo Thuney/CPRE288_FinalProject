@@ -18,7 +18,7 @@ void TIMER3B_Handler(void)
             TIMER3_ICR_R = TIMER_ICR_CBECINT;
 
             //Store time of outgoing pulse
-            rising_time = ((int)TIMER3_TBPS_R << 16) | TIMER3_TBR_R;
+            rising_time = (((int)TIMER3_TBPS_R << 16) | TIMER3_TBR_R);
 
 			//Set ping state to low (receiving pulse)
             state = LOW;
@@ -29,7 +29,7 @@ void TIMER3B_Handler(void)
             TIMER3_ICR_R = TIMER_ICR_CBECINT;
 			
 			//Store time of incoming pulse
-            falling_time = ((int)TIMER3_TBPS_R << 16) | TIMER3_TBR_R;
+            falling_time = (((int)TIMER3_TBPS_R << 16) | TIMER3_TBR_R);
 			
 			//Set ping state to done
             state = DONE;
@@ -83,7 +83,7 @@ void sonar_init()
     //Configure Timer3B in capture mode, edge-time mode, and counting up
     TIMER3_TBMR_R = 0b10111;
 
-    //Load starting value into timer (2^32 - 1)
+    //Set upper bound for timeout event
     TIMER3_TBILR_R |= 0xFFFF;
 
     //Enable capture mode event interrupt
@@ -107,12 +107,12 @@ void sonar_init()
 
 void emit_sonar_pulse()
 {
-    //Set Pin 3 of Port B as an output
-    GPIO_PORTB_DIR_R |= 0x08; //0b0000_1000
-
     //Set Pin 3 of Port B as a GPIO pin (Turn off Alternate Function)
     GPIO_PORTB_AFSEL_R &= 0xF7; //0b1111_0111
     GPIO_PORTB_PCTL_R &= ~(0x0000F000);
+
+    //Set Pin 3 of Port B as an output
+    GPIO_PORTB_DIR_R |= 0x08; //0b0000_1000
 
     //Set the output value of Pin 3 of Port B to HIGH
     GPIO_PORTB_DATA_R |= 0x08; //0b0000_1000
@@ -130,10 +130,14 @@ void emit_sonar_pulse()
     GPIO_PORTB_AFSEL_R |= 0x08; //0b0000_1000
 	
 	//Mux control for alternate function
+    GPIO_PORTB_PCTL_R &= ~(0x0000F000);
     GPIO_PORTB_PCTL_R |= 0x00007000;
 
     //Set pulse state to HIGH
     state = HIGH;
+
+    //Enable timer
+    TIMER3_CTL_R |= TIMER_CTL_TBEN;
 }
 
 float sonar_getDistance()
@@ -143,16 +147,14 @@ float sonar_getDistance()
 
     //Wait for completion of a ping
     while(state != DONE);
-
-	//Length of pulse in clock cycles	
-	length = falling_time - rising_time;
 	
 	//Compute if overflow occurs
-    int overflow = (deltaCycles < 0);
+    int overflow = (falling_time < rising_time);
 
-	//Add term to account for overflow (24 1's if overflow)
-    length += (overflow<<24);
+    //Length of pulse in clock cycles
+	//Add term to account for overflow (16 1's if overflow)
+    length = falling_time - rising_time + ((overflow << 16) - 1);
 
 	//Convert cycles to distance, dividing by 2 to account for return trip
-    return ((deltaCycles/16000000)*34000)/2);
+    return ((((float)length/16000000)*34300)/2.0);
 }

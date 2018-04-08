@@ -75,7 +75,7 @@ void servo_init()
     //20 ms period is 320,000 cycles
 	
 	//0x4E200 = 320,000 (base 10)
-    TIMER1_TBILR_R = 0xFA00 //Load value of 64,000 into our interval load register
+    TIMER1_TBILR_R = 0xFA00; //Load value of 64,000 into our interval load register
     TIMER1_TBPR_R = 0x4;    //Prescaler of 4
 	
 	//Move servo to default position
@@ -179,13 +179,13 @@ void move_servo(unsigned counter)
     timer_waitMillis(300);
 }
 
-void main(){
-    lcd_init();
-    servo_init();
-    calibrate();
-    button_init();
-    while(1){
-        int button = button_getButton();
-        buttonSwitch(button);
-    }
-}
+//void main(){
+//    lcd_init();
+//    servo_init();
+//    calibrate();
+//    button_init();
+//    while(1){
+//        int button = button_getButton();
+//        buttonSwitch(button);
+//    }
+//}

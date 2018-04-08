@@ -8,6 +8,7 @@
 #ifndef SONAR_H_
 #define SONAR_H_
 
+#include <stdint.h>
 #include <inc/tm4c123gh6pm.h>
 #include "driverlib/interrupt.h"
 #include "Timer.h"
@@ -15,7 +16,7 @@
 volatile unsigned rising_time;
 volatile unsigned falling_time;
 volatile enum{LOW, HIGH, DONE} state;
-volatile uint32_t length;
+volatile uint32_t length; //Length of pulse in cycles
 
 /*
  * Handler function for a captured event on Timer3B
@@ -41,7 +42,8 @@ void sonar_init();
 void emit_sonar_pulse();
 
 /*
- * Send a sonar pulse and convert the time between pulses into a distance in cm
+ * Send a sonar pulse and convert the time between pulses into a distance in cm.
+ * Stores the calculated distance into the global variable 'length' and returns the delta in cycles
  */
 float sonar_getDistance();
 

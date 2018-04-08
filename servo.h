@@ -14,7 +14,7 @@
 
 #include <inc/tm4c123gh6pm.h>
 
-#include "timer.h"
+#include "Timer.h"
 #include "lcd.h"
 #include "button.h"
 
