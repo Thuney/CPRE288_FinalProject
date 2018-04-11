@@ -16,7 +16,7 @@ double msPerDegree = 0.006172; 	//Approximately (2.25-0.75)/180 (based on datash
 
 //Store current count and degrees
 double degrees = 0;
-int count = 12000; //Theta = 0 degrees
+int count = min; //Theta = 0 degrees
 
 int upOrDown = 1; //1 if up, -1 if down
 
