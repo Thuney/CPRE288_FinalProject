@@ -8,12 +8,23 @@
 #include <Sensor.h>
 #include <math.h>
 
-void Sensor_init(void){
+void Sensor_init(void)
+{
+	//Enable system clock to Port B
     SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R1;
+	
+	//Enable system clock to ADC 0
     SYSCTL_RCGCADC_R |= 0x1;
+	
+	//Enable alternate function on GPIO Port B
     GPIO_PORTB_AFSEL_R |= 0x01;
+	
+	//Set Port B Pin 4 as input
     GPIO_PORTB_DIR_R &= 0b11101111;
+	
+	//Disable Port B Pin 4 as digital pin
     GPIO_PORTB_DEN_R &= 0b11101111;
+	
     GPIO_PORTB_AMSEL_R |= 0x01;
     GPIO_PORTB_ADCCTL_R = 0x00;
 
@@ -26,7 +37,8 @@ void Sensor_init(void){
 }
 
 
-unsigned Sensor_reader(void){
+unsigned read_ir(void)
+{
     ADC0_PSSI_R=ADC_PSSI_SS1;
     while((ADC0_RIS_R & ADC_RIS_INR1) == 0){
 
@@ -35,7 +47,8 @@ unsigned Sensor_reader(void){
     return ADC0_SSFIFO1_R;
 }
 
-void main(){
+void main()
+{
     lcd_init();
     Sensor_init();
     unsigned dataAvg;
