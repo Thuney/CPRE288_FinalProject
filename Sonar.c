@@ -1,8 +1,10 @@
 /*
- * Sonar.c
+ *  @file Sonar.c
  *
- *  Created on: Mar 7, 2018
- *      Author: charette
+ *  @date Mar 7, 2018
+ *      @author Justin Charaette
+ *      @author Bryan Kalkhoff
+ *      @brief This files contains all of the methods for sonar, including initialization and other methods for retrieving data.
  */
 
 #include "Sonar.h"
@@ -10,8 +12,11 @@
 #include "timer.h"
 #include <inc/tm4c123gh6pm.h>
 
+
 /**
- *   This method initiates the ping sensor.
+ * This method initiates the ping sensor
+ * @author Justin Charaette
+ * @date March 7, 2018
  */
 void sonar_init(void){
     //Turn on clock to TIMER3
@@ -67,6 +72,11 @@ void sonar_init(void){
 /**
  *   This method operates the ping sensor.
  */
+/**
+ * This method operates the ping sensor
+ * @author Justin Charaette
+ * @date March 7, 2018
+ */
 void send_pulse(){
     //alternative and port control (AFSEL and CTL)
     //alt function off
@@ -104,6 +114,11 @@ void send_pulse(){
 /**
  *   This method captures the time from when the sensor sends a pulse and it returns.
  */
+/**
+ * This method captures the time from when the sensor sends a pulse
+ * @author Justin Charaette
+ * @date March 7, 2018
+ */
 void TIMER3B_Handler(void)
 {
     // fixed condition
@@ -134,10 +149,13 @@ void TIMER3B_Handler(void)
     }
 }
 
-/**
- *   This method collects the ping sensor data.
- */
 
+/**
+ * This method collects the ping sensor data.
+ * @author Justin Charaette
+ * @Bryan Kalkhoff
+ * date March 7, 2018
+ */
 float ping_getDistance()
 {
     send_pulse();

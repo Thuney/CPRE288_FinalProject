@@ -1,15 +1,24 @@
 /**
-*   @file servo.c
-*   @brief This file contains the methods necessary to operate the servo.
-*/
+ *   @file servo.c
+ *   @brief This file contains the methods necessary to operate the servo.
+ *   @author Jake Aunan
+ *   @author Ryan Goluchh
+ *   @date April 14, 2018
+ */
 
 #include "Servo.h"
 #include "lcd.h"
 #include "timer.h"
 #include <inc/tm4c123gh6pm.h>
 /**
-*   This method initiates servo operation.
-*/
+ *   This method initiates servo operation.
+ */
+/**
+ * This method initiates the servo operations
+ * @author Jake Aunan
+ * @author Ryan Goluchh
+ * @date April 14, 2018
+ */
 void servo_init(){
     //INIT PORT B: GPIO PB5, turn on clk, alt. function, output, enable
     SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R1;
@@ -61,9 +70,13 @@ void servo_init(){
 }
 
 /**
-*   This method moves the servo.
-*   @param degree   The degree to move the servo to
-*/
+ *
+ *   This method moves the servo.
+ *   @param degree   The degree to move the servo to
+ *   @author Jake Aunan
+ *   @author Ryan Goluchh
+ *   @date April 15,2018
+ */
 void move_servo(float degree){
     pulse_width = ((28992 * (degree/180.0)) + 874);
 

@@ -1,3 +1,16 @@
+/**
+ * @file main.c
+ * @brief this file will run the all the commands to the robot.
+ * @author Jake Aunan
+ * @author Ryan Goluchh
+ * @author Bryan Kalkhoff
+ * @author Justin Charette
+ * @author Aaron Thune
+ * @author Jonathan Novak
+ *
+ * @date April 14,2018
+ */
+
 #include <Timer.h>
 #include <lcd.h>
 #include <inc/tm4c123gh6pm.h>
@@ -34,7 +47,13 @@ struct object objects[10];
  * putting in main for now since its easier
  */
 
-//sweeps 0-180 degrees taking in sensor data every 2 degrees
+/**
+ * This method will move the servo between 0-180 degree while collecting data on potential object.
+ * @author Jake Aunan
+ * @author Justin Charette
+ * @author Bryan Kalkhoff
+ * @date April 14, 2018
+ */
 void sweep() {
     int i=0;
     int total = 0;
@@ -50,7 +69,7 @@ void sweep() {
 
         lcd_printf("angle: %d\nIR: %d\nPing: %d", total, ir_distance[i],sonar_Distance[i]);
 
-                //stores values as strings for UART
+        //stores values as strings for UART
         //        sprintf(irARR, "%4d", ir_distance[i]);
         //        sprintf(sonarARR, "%4d", sonar_Distance[i]);
         //        sprintf(totalARR, "%4d", total);
@@ -70,8 +89,13 @@ void sweep() {
 
 }
 
-//calculates width of an object and returns it
-//DOESNT WORK
+/**
+ * This method takes data from the struck and calculates the object's width
+ * @author Bryan Kalkhoff
+ * @author Jake Aunan
+ * @param struct object that holds the info on the object
+ * @date April 14,2018
+ */
 int get_width(struct object o)
 {
     double checkAngle;
@@ -81,8 +105,13 @@ int get_width(struct object o)
     return width;
 }
 
-//goes through stored sensor data and finds objects
-//returns number of obects
+/**
+ * goes through stored sensor data and finds objects
+ * @author Jake Aunan
+ * @author Ryan Goluchh
+ * @date April 14, 2018
+ * @return int number of obects
+ */
 int get_objects()
 {
     int objectCount = 0;
@@ -134,8 +163,14 @@ int get_objects()
     return objectCount;
 }
 
-//points to the right side of all objects and sends angle over UART
-// used for debugging
+
+/**
+ * Points to the right side of all objects and sends the angle over UART
+ * @author Jake Aunan
+ * @author Justin Charette
+ * @author Ryan Goluchh
+ * @date April 14,2018
+ */
 void point_to_objects()
 {
     int i;
@@ -158,8 +193,15 @@ void point_to_objects()
     }
 }
 
-//gets the closest object and returns its index in object array
-//also points to it
+
+/**
+ * Gets the closes object and return its index in object array
+ * then points to the object
+ * @author Justin Charette
+ * @author Jake Aunan
+ * @author Bryan Kalkhoff
+ * @date April 14, 2018
+ */
 int get_min()
 {
     int i;
@@ -195,6 +237,15 @@ int get_min()
 }
 /*
  * Moves the bot and returns distance traveled if there was a valid command
+ */
+/**
+ * Moves the bot and returns the distance traveled if there was a valid command
+ * @author Jake Aunan
+ * @author Ryan Goluchh,
+ * @param char move
+ * @param oi_t *senssor_data
+ * @param char *command
+ * @date April 14, 2018
  */
 int handle_move(char move, oi_t *sensor_data, char *command)
 {
@@ -262,7 +313,18 @@ int handle_move(char move, oi_t *sensor_data, char *command)
  * After each command is sent the bot will move and then sweep the area in front
  * of it for objects and display that data on PuTTy.
  */
+/**
+ * Runs the rob by using commands from UART and data from all the sensors
+ * @author Jake Aunan
+ * @author Ryan Goluchh
+ * @author Bryan Kalkhoff
+ * @author Justin Charette
+ * @author Aaron Thune
+ * @author Jonathan Novak
+ * @date April 14, 2018
+ */
 int main(void)
+
 {
     //initializes variables
     int objectCount; //number of objects found after a sweep
@@ -271,7 +333,7 @@ int main(void)
     int distance; //distance moved after each command
     char command = 0; //0 if a command hasn't been issued, 1 if it has. Used to know if it should sweep or not.
 
-	//initializes peripherals
+    //initializes peripherals
     servo_init();
     ir_init();
     sonar_init();
@@ -282,15 +344,15 @@ int main(void)
     oi_init(sensor_data); //the sensors are initialized
     oi_setWheels(0,0); // stops the robot
 
-	//runs the program
+    //runs the program
     while(1)
     {
         move = uart_receive(); //holds move command
         distance = handle_move(move, sensor_data, &command); //attempts to move bot with character sent over
-		
-		//performs a sweep and sends data if a move was made from a valid command
+
+        //performs a sweep and sends data if a move was made from a valid command
         if(command == 1){
-            uart_sendStr("Sweeping..."); 
+            uart_sendStr("Sweeping...");
             sweep(); //performs sweep
             uart_sendChar('\r');
             uart_sendChar('\n');

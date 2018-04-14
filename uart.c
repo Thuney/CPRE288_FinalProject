@@ -1,13 +1,16 @@
 /**
  *
  * 	@file  uart.c
+ * 	@brief This file holds the methods for uart including initializing and sending.
  *
+ *   @author Jake Aunan
+ *   @author Ryan Goluchh
+ *   @author Bryan Kalkhoff
+ *   @author Justin Charette
+ *   @author Aaron Thune
+ *   @author Jonathan Novak
  *
- *
- *
- *
- *   @author
- *   @date
+ *   @date April 14, 2018
  */
 
 #include "timer.h"
@@ -18,7 +21,10 @@
 #include <time.h>
 
 /**
+ * @author Aaron Thune
+ * @author Jonathan Novak
  * @brief sets all necessary registers to enable the uart 1 module.
+ * @date April 14, 2018
  */
 void uart_init(void){
     SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R1; // initialize the clock
@@ -39,9 +45,11 @@ void uart_init(void){
     UART1_CTL_R = ((UART_CTL_RXE) | (UART_CTL_TXE) | (UART_CTL_UARTEN)); //turns everything on and enables everything
 }
 
-/**
+/**@author  Aaron Thune
+ * @author Jonathan Novak
  * @brief Sends a single 8 bit character over the uart 1 module.
  * @param data the data to be sent out over uart 1
+ * @date April 14, 2018
  */
 void uart_sendChar(char data){
     while(UART1_FR_R & 0x20){ //I am getting a weird error telling me UART1 undefined
@@ -50,8 +58,11 @@ void uart_sendChar(char data){
 }
 
 /**
+ * @author  Aaron Thune
+ * @author Jonathan Novak
  * @brief polling receive an 8 bit character over uart 1 module.
- * @return the character received or a -1 if error occured
+ * @return the character received or a -1 if error occurred
+ * @date April 14,2018
  */
 int uart_receive(void){
     char rdata = 0;
@@ -72,8 +83,11 @@ int uart_receive(void){
 }
 
 /**
+ * @author  Aaron Thune
+ * @author Jonathan Novak
  * @brief sends an entire string of character over uart 1 module
  * @param data pointer to the first index of the string to be sent
+ * @date April 14, 2018
  */
 void uart_sendStr(const char *data){
     int i = 0;
@@ -88,7 +102,8 @@ void uart_sendStr(const char *data){
 //          I didn't test this, although it should work
 
 
-/* part 1
+// part 1
+/*
 int main(void) {
     uart_init();
     lcd_init();

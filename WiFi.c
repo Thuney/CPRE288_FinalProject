@@ -1,8 +1,8 @@
 /*
- * WiFi.c
+ * @file WiFi.c
  *
- *  Created on: Sep 25, 2016
- *      Author: ericm
+ *  @date Sep 25, 2016
+ *      @author ericm
  *	Updates: dmlarson
  *
  * To use WiFi.c
@@ -29,7 +29,7 @@
 
 /**
  * starts WiFi bridge
- * @param password a null terminated string to be used as wireless password
+ * @param password a null terminated string to be used as wireless password.
  * @return 0 on success, -1 failure
  */
 int WiFi_start(char *password) {

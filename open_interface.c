@@ -156,7 +156,7 @@ void oi_init(oi_t *self)
 {
 	oi_init_noupdate();
 
-	oi_update(self);
+	oi_update(self);//stop here
 	oi_update(self); //Call twice to clear distance/angle
 
 }
@@ -408,11 +408,14 @@ void oi_uartSendChar(char data)
 
 char oi_uartReceive(void)
 {
+    oi_uartInit();
+
 	static int count = 0;
 	//uint32_t tempData; //used for error checking
 	char data;
 
 	while((UART4_FR_R & UART_FR_RXFE)); //wait here until data is recieved
+	//ToDo make sure you turn it back to UART4 if this test doesn't work
 
 	data = (char)(UART4_DR_R & 0xFF);
 

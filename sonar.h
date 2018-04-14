@@ -1,50 +1,56 @@
 /*
- * sonar.h
+ * Sonar.h
  *
- *  Created on: Apr 4, 2018
- *      Author: adthune
+ *  Created on: Mar 7, 2018
+ *      Author: charette
  */
 
 #ifndef SONAR_H_
 #define SONAR_H_
 
-#include <stdint.h>
 #include <inc/tm4c123gh6pm.h>
-#include "driverlib/interrupt.h"
+#include <stdint.h>
+#include <stdbool.h>
 #include "Timer.h"
+#include "driverlib/interrupt.h"
 
-volatile unsigned rising_time;
-volatile unsigned falling_time;
-volatile enum{LOW, HIGH, DONE} state;
-volatile uint32_t length; //Length of pulse in cycles
 
-/*
- * Handler function for a captured event on Timer3B
- * 
- * Stores the times of sent and received pings in global variables
- * rising_time and falling_time, and changes the value of state according
- * to the status of the ping event
- */
-void Timer3B_Handler();
+#define BIT0        0x01
+#define BIT1        0x02
+#define BIT2        0x04
+#define BIT3        0x08
+#define BIT4        0x10
+#define BIT5        0x20
+#define BIT6        0x40
+#define BIT7        0x80
 
-/*
- * Initializes sonar settings
- *
- * Uses:
- *  GPIO Port B Pin 3 (as output for pulse and as Timer)
- *  Timer 3B (for capturing time events)
- */
+#define PING_FACTOR 0.0010625f //Factor to get distance in cm
+
+volatile enum {RISE, FALL, DONE} state;
+volatile unsigned risingEdge;
+volatile unsigned fallingEdge;
+volatile unsigned pulseLength;
+volatile unsigned overflow;
+
+/**
+*   This method captures the time from when the sensor sends a pulse and it returns.
+*/
+void TIMER3B_Handler(void);
+
+/**
+*   This method initiates the ping sensor.
+*/
 void sonar_init();
 
-/*
- * Emits a sonar pulse on GPIO Port B Pin 3 and sets the pin up for receiving the return signal
- */
-void emit_sonar_pulse();
+/**
+*   This method operates the ping sensor.
+*/
+void send_pulse();
 
-/*
- * Send a sonar pulse and convert the time between pulses into a distance in cm.
- * Stores the calculated distance into the global variable 'length' and returns the delta in cycles
- */
-float sonar_getDistance();
+/**
+*   This method collects the ping sensor data.
+*/
+float ping_getDistance();
+
 
 #endif /* SONAR_H_ */

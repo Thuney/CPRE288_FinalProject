@@ -1,15 +1,21 @@
 /*
- * IR.c
- *
- *  Created on: Feb 28, 2018
- *      Author: charette
+ * @file IR.c
+ * @brief Holds the initialization and methods needed to run ir.
+ * @author Justin Charaette
+ * @author Bryan Kalkhoff
+ * @date February 28, 2018
  */
 #include "lcd.h"
 #include "timer.h"
 #include <inc/tm4c123gh6pm.h>
 #include <math.h>
 
-
+/**
+ * this method initializes the IR sensor
+ * @uthor Justin Charaette
+ * @author Bryan Kalkhoff
+ * @date April 14, 2018
+ */
 void ir_init(void){
     SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R1; // initialize the clock
     SYSCTL_RCGCADC_R |= 0x1; //enabled ADC0
@@ -26,7 +32,14 @@ void ir_init(void){
     ADC0_SAC_R |= ADC_SAC_AVG_64X; //enable oversampling to average
     ADC0_ACTSS_R |= ADC_ACTSS_ASEN1; //re-enable ADC0 SS0
 }
-
+/**
+ * This method reads from the IR and returns the value
+ * @author Justin Charaette
+ * @author Bryan Kalkhoff
+ * @return unsigned value
+ * @date April 14, 2018
+ *
+ */
 unsigned ir_read(){
     //disable ADC0SS1 to configure
     ADC0_ACTSS_R &= ~ADC_ACTSS_ASEN1;
@@ -51,7 +64,13 @@ unsigned ir_read(){
     new_value = 4.2248*pow(val_convert,1.3522);
     return new_value;
 }*/
-
+/**
+ * This mehthod converts the value read by the ADC and returns the distance
+ * @author Justin Charaette
+ * @author Bryan Kalkhoff
+ * @return float distance   converted distance
+ * @date April 14, 2018
+ */
 float getDistance() {
     int i=0, increments = 100;
     int isr_int_value = 0;

@@ -1,8 +1,11 @@
 /*
- * movement.c
+ * @file movement.c
+ *  @brief This file contains the methods used to move the bot
+ *  @author Bryan Kalkhoff
+ *  @author Justin Charaette
+ *  @author Jake Aunan
+ *  @date Jan 24, 2018
  *
- *  Created on: Jan 24, 2018
- *      Author: bryank
  */
 #include <Timer.h>
 #include <lcd.h>
@@ -15,6 +18,15 @@
  * returns the distance moved
  *
  * NEEDS BUMP SENSORS
+ */
+/**
+ * Moves the bot forward the selected distance and reverses if the light sensor is activated
+ * @author Bryan Kalkhoff
+ * @author Jake Aunan
+ * @param oi_t *sensor_data
+ * @param int distance  distance moved
+ * @return int distance
+ * @date April 14, 2018
  */
 int move_forward(oi_t *sensor_data, int distance) {
     int sum = 0;
@@ -77,6 +89,15 @@ int move_forward(oi_t *sensor_data, int distance) {
  * NO CLIFF/TAPE CHECK
  * returns the distance moved
  */
+/**
+ * moves the bot backward
+ * @author Jake Aunan
+ * @author Justin Charaette
+ * @param oi_t *sensor
+ * @param int distance
+ * @return distance   the distance travled
+ * @date April 14, 2018
+ */
 int move_backward(oi_t *sensor_data, int distance) {
     int sum = 0;
     distance = 0-distance;
@@ -89,7 +110,15 @@ int move_backward(oi_t *sensor_data, int distance) {
     oi_setWheels(0,0); // stops the robot
     return distance;
 }
-
+/**
+ * turns the bot counter clockwise
+ * @author Justin Charaette
+ * @author Jake Aunan
+ * @param oi_t * sensor
+ * @param int distance
+ * @date April 14, 2018
+ *
+ */
 void turn_counter_clockwise(oi_t *sensor_data, int degrees) {
     int angle = 0;
     oi_setWheels(300,-300);
@@ -99,7 +128,14 @@ void turn_counter_clockwise(oi_t *sensor_data, int degrees) {
     }
     oi_setWheels(0,0); // stops the robot
 }
-
+/**
+ * turns the bot clockwise
+ * @author Justin Charaette
+ * @author Jake Aunan
+ * @param oi_t * sensor
+ * @param int distance
+ * @date April 14, 2018
+ */
 void turn_clockwise(oi_t *sensor_data, int degrees) {
     int angle = 0;
     degrees = 0-degrees;
