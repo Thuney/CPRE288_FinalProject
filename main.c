@@ -69,19 +69,19 @@ void sweep() {
 
         lcd_printf("angle: %d\nIR: %d\nPing: %d", total, ir_distance[i],sonar_Distance[i]);
 
-        //stores values as strings for UART
-        //        sprintf(irARR, "%4d", ir_distance[i]);
-        //        sprintf(sonarARR, "%4d", sonar_Distance[i]);
-        //        sprintf(totalARR, "%4d", total);
-        //
-        //        //sends data over UART
-        //        uart_sendStr(totalARR);
-        //        uart_sendStr("                 ");
-        //        uart_sendStr(irARR);
-        //        uart_sendStr("                   ");
-        //        uart_sendStr(sonarARR);
-        //        uart_sendChar('\r');
-        //        uart_sendChar('\n');
+//        //stores values as strings for UART
+//        sprintf(irARR, "%4d", ir_distance[i]);
+//        sprintf(sonarARR, "%4d", sonar_Distance[i]);
+//        sprintf(totalARR, "%4d", total);
+//
+//        //sends data over UART
+//        uart_sendStr(totalARR);
+//        uart_sendStr("                 ");
+//        uart_sendStr(irARR);
+//        uart_sendStr("                   ");
+//        uart_sendStr(sonarARR);
+//        uart_sendChar('\r');
+//        uart_sendChar('\n');
 
         total = total + 2;
         i++;
@@ -122,7 +122,7 @@ int get_objects()
     for(index=1; index<=90; index++)
     {
         //check if IR is valid
-        if(ir_distance[index]<=70)
+        if(ir_distance[index]<=60)
         {
             //check for sonar change (means object)
             if((abs(sonar_Distance[index-1] - sonar_Distance[index]) <5) && (check == 0))
@@ -133,7 +133,7 @@ int get_objects()
                 check = 1;
             }
         }
-        else if((ir_distance[index]>70) && (check == 1))
+        else if((ir_distance[index]>60) && (check == 1))
         {
             objects[objectCount].leftSideAngle = (index*2);
             objectCount++;
@@ -145,7 +145,7 @@ int get_objects()
      * send object data over UART
      */
     char print[50];
-    for (i = 1; i < 10; i++)
+    for (i = 0; i < 10; i++)
     {
         if(objects[i].real == 1)
         {
@@ -173,7 +173,7 @@ int get_objects()
  */
 void point_to_objects()
 {
-    int i;
+    char i;
     for(i=0; i<10; i++)
     {
         if(objects[i].real == 1)
@@ -190,6 +190,22 @@ void point_to_objects()
             //            uart_sendStr(print);
             timer_waitMillis(1500);
         }
+    }
+}
+
+/**
+ * Points to the right side of all objects and sends the angle over UART
+ * @author Jake Aunan
+ * @date April 14,2018
+ */
+void clear_objects()
+{
+    char i;
+    for(i=0; i<10; i++){
+        objects[i].rightSideAngle = 0;
+        objects[i].leftSideAngle = 0;
+        objects[i].distanceCheck = 0;
+        objects[i].real = 0;
     }
 }
 
@@ -258,11 +274,11 @@ int handle_move(char move, oi_t *sensor_data, char *command)
     }
     //moves forward..dist
     if(move == '8'){
-        *command = 1;
+        //*command = 1;
         uart_sendStr("forward");
         uart_sendChar('\r');
         uart_sendChar('\n');
-        distance = move_forward(sensor_data, 200);
+        distance = move_forward(sensor_data, 500);
     }
     //moves backward..dist
     else if(move == '2'){
@@ -274,11 +290,11 @@ int handle_move(char move, oi_t *sensor_data, char *command)
     }
     //turns left 90, then forward..dist
     else if(move == '4'){
-        *command = 1;
+        //*command = 1;
         uart_sendStr("left 90, then forward");
         uart_sendChar('\r');
         uart_sendChar('\n');
-        turn_counter_clockwise(sensor_data, 90);
+       // turn_counter_clockwise(sensor_data, 90);
         distance = move_forward(sensor_data, 200);
     }
     //turns right 90, then forward..dist
@@ -288,7 +304,7 @@ int handle_move(char move, oi_t *sensor_data, char *command)
         uart_sendChar('\r');
         uart_sendChar('\n');
         turn_clockwise(sensor_data, 90);
-        distance = move_forward(sensor_data, 200);
+        //distance = move_forward(sensor_data, 200);
     }
     //turns left 45, then forward..dist
     else if(move == '7'){
@@ -297,7 +313,7 @@ int handle_move(char move, oi_t *sensor_data, char *command)
         uart_sendChar('\r');
         uart_sendChar('\n');
         turn_counter_clockwise(sensor_data, 45);
-        distance = move_forward(sensor_data, 200);
+       // distance = move_forward(sensor_data, 200);
     }
     //turns right 45, then forward..dist
     else if(move == '9'){
@@ -306,7 +322,7 @@ int handle_move(char move, oi_t *sensor_data, char *command)
         uart_sendChar('\r');
         uart_sendChar('\n');
         turn_clockwise(sensor_data, 45);
-        distance = move_forward(sensor_data, 200);
+       // distance = move_forward(sensor_data, 200);
     }
     return distance;
 }
@@ -317,6 +333,10 @@ int handle_move(char move, oi_t *sensor_data, char *command)
  * This program runs by moving the bot around with commands sent over UART.
  * After each command is sent the bot will move and then sweep the area in front
  * of it for objects and display that data on PuTTy.
+ *
+ *
+ * ALL CALIBRATION FOR BOT 13
+ *
  */
 /**
  * Runs the rob by using commands from UART and data from all the sensors
@@ -328,6 +348,9 @@ int handle_move(char move, oi_t *sensor_data, char *command)
  * @author Jonathan Novak
  * @date April 14, 2018
  */
+
+
+
 int main(void)
 
 {
@@ -362,11 +385,17 @@ int main(void)
             uart_sendChar('\r');
             uart_sendChar('\n');
             objectCount = get_objects(); //finds objects based on sweep data
+            point_to_objects();
             uart_sendStr("..Finished");
+            uart_sendChar('\r');
+            uart_sendChar('\n');
             uart_sendChar('\r');
             uart_sendChar('\n');
             //point_to_objects();//debugging
             command = 0; //sets command back to 0 so it does not continually sweep
+
+            void clear_objects();
         }
     }
 }
+

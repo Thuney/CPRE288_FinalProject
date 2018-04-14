@@ -30,7 +30,8 @@
  */
 int move_forward(oi_t *sensor_data, int distance) {
     int sum = 0;
-    oi_setWheels(250,250); //sets wheel speed to 100 mm/s
+    //oi_setWheels(255,238); //sets wheel speed to 100 mm/s
+    oi_setWheels(155,145);
     while(sum<distance){
         oi_update(sensor_data); // updates the data from the sensor
 

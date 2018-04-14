@@ -91,6 +91,6 @@ void move_servo(float degree){
     TIMER1_TBPMR_R |= ((320000 - pulse_width) >> 16);
 
     //Delay for the servo to move to the position
-    timer_waitMillis(10);
+    timer_waitMillis(30);
 }
 

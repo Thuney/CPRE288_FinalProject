@@ -80,12 +80,13 @@ float getDistance() {
         isr_int_value += ir_read(); //reads value and adds it to the total value
     }
     int quantNum = isr_int_value / increments; //gets the average of the 100 cycles
-    //equation found from excel
-    float distance = 232335*pow(quantNum, -1.286);
+    //equation found for BOT 13
+    float distance = 120283*pow(quantNum, -1.197);
     return distance;
 }
+
 /*
-    int main(void){
+int main(void){
     lcd_init();
     ir_init();
     int raw_value =0;
@@ -103,8 +104,8 @@ float getDistance() {
     }
 
 }
-*/
 
+*/
 
 
 
