@@ -78,6 +78,19 @@ int move_forward(oi_t *sensor_data, int distance) {
             break;
         }
 
+        //Bump detection
+        else if(sensor_data->bumpLeft == 1)
+        {
+            sum+=move_backward(sensor_data, 100);
+            break;
+        }
+
+        else if(sensor_data->bumpRight == 1)
+        {
+            sum+=move_backward(sensor_data, 100);
+            break;
+        }
+
         sum+= sensor_data->distance; // adds new data to the sum of difference
     }
     oi_setWheels(0,0); // stops the robot
