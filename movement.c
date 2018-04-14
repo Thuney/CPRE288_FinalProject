@@ -93,6 +93,7 @@ int move_forward(oi_t *sensor_data, int distance) {
  * moves the bot backward
  * @author Jake Aunan
  * @author Justin Charaette
+ * @author Bryan Kalkhoff
  * @param oi_t *sensor
  * @param int distance
  * @return distance   the distance travled
@@ -114,6 +115,7 @@ int move_backward(oi_t *sensor_data, int distance) {
  * turns the bot counter clockwise
  * @author Justin Charaette
  * @author Jake Aunan
+ * @author Bryan Kalkhoff
  * @param oi_t * sensor
  * @param int distance
  * @date April 14, 2018
@@ -132,6 +134,7 @@ void turn_counter_clockwise(oi_t *sensor_data, int degrees) {
  * turns the bot clockwise
  * @author Justin Charaette
  * @author Jake Aunan
+ * @author Bryan Kalkhoff
  * @param oi_t * sensor
  * @param int distance
  * @date April 14, 2018

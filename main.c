@@ -251,6 +251,11 @@ int handle_move(char move, oi_t *sensor_data, char *command)
 {
     int distance = 0;
 
+    //sweep
+    //author @Justin Charette (4/14)
+    if(move == '1') {
+        *command = 1;
+    }
     //moves forward..dist
     if(move == '8'){
         *command = 1;

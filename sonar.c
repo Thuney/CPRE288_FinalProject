@@ -153,7 +153,7 @@ void TIMER3B_Handler(void)
 /**
  * This method collects the ping sensor data.
  * @author Justin Charaette
- * @Bryan Kalkhoff
+ * @author Bryan Kalkhoff
  * date March 7, 2018
  */
 float ping_getDistance()

@@ -1,8 +1,8 @@
 /**
  *   @file servo.c
  *   @brief This file contains the methods necessary to operate the servo.
- *   @author Jake Aunan
- *   @author Ryan Goluchh
+ *   @author Justin Charette
+ *   @author Bryan Kalkhoff
  *   @date April 14, 2018
  */
 
@@ -15,8 +15,8 @@
  */
 /**
  * This method initiates the servo operations
- * @author Jake Aunan
- * @author Ryan Goluchh
+ * @author Justin Charette
+ * @author Bryan Kalkhoff
  * @date April 14, 2018
  */
 void servo_init(){
@@ -73,12 +73,16 @@ void servo_init(){
  *
  *   This method moves the servo.
  *   @param degree   The degree to move the servo to
- *   @author Jake Aunan
- *   @author Ryan Goluchh
+ *   @author Justin Charette
+ *   @author Bryan Kalkhoff
  *   @date April 15,2018
  */
 void move_servo(float degree){
-    pulse_width = ((28992 * (degree/180.0)) + 874);
+    /*
+     * April 14, 2018 changed the formula to what it is now  to increase the accuracy to the servo
+     * Bryan Kalkhoff
+     */
+    pulse_width = ((27500 * (degree/180.0)));
 
     //set lower 16 bits of pulse width
     TIMER1_TBMATCHR_R = ((320000 - pulse_width) & 0xFFFF);
