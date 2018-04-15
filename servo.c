@@ -15,8 +15,8 @@ int min = 8135;		 	//Match value at theta = 0 degrees
 double msPerDegree = 0.006172; 	//Approximately (2.25-0.75)/180 (based on datasheet for servo)
 
 //Store current count and degrees
-double degrees = 0;
-int count = min; //Theta = 0 degrees
+double currentDegrees = 0;
+int count = 0;
 
 int upOrDown = 1; //1 if up, -1 if down
 
@@ -65,8 +65,9 @@ void servo_init()
     //20 ms period is 320,000 cycles
 	
 	//0x4E200 = 320,000 (base 10)
-    TIMER1_TBILR_R = 0xFA00; //Load value of 64,000 into our interval load register
-    TIMER1_TBPR_R = 0x4;     //Prescaler of 4
+	//Timer in PWM mode acts as a 24-bit counter, with prescaler as the upper 8 bits
+    TIMER1_TBILR_R = 0x4E200 & 0xFFFF; //Load lower 16 bits into interval load register
+    TIMER1_TBPR_R = (0x4E200 >> 16) & 0xFF; //Load upper 8 bits into prescaler register
 	
 	//Move servo to default position
     set_servo_pos(90);
@@ -77,28 +78,28 @@ void servo_init()
 
 int calculateDeltaCount(double delta_deg)
 {
-    return ((((msPerDegree*delta_deg)/20)*320000)/5);
+    return (((msPerDegree*delta_deg)/20)*320000);
 }
 
-void move_servo(int degree)
+void move_servo(int degrees)
 {	
 	//Calculate change in counter value
-	count += calculateDeltaCount(degree)
+	count += calculateDeltaCount(degrees)
 	count = (count > max) ? max : (count < min) ? min : count;
 
     //Set Match Register Value, adjusting pulse width
-	//(320,000/5) - counter
-    TIMER1_TBMATCHR_R = ((0x4E200 / 5) - counter);
+	//320,000 - counter
+    TIMER1_TBMATCHR_R = (0x4E200 - counter);
 	//Prescaler of 4
     TIMER1_TBPMR_R =  = 0x4;
 	
     //Update current position in degrees
-    degrees += degree;
+    currentDegrees += degree;
 
     if (upOrDown == -1)
-        lcd_printf("%d count \n%d degrees\ndecrementing", count, (int) degrees);
+        lcd_printf("%d count \n%d degrees\ndecrementing", count, (int) currentDegrees);
     else
-        lcd_printf("%d count \n%d degrees\nincrementing", count, (int) degrees);
+        lcd_printf("%d count \n%d degrees\nincrementing", count, (int) currentDegrees);
 	
 	//Wait for servo to move
     timer_waitMillis(300);
@@ -106,12 +107,13 @@ void move_servo(int degree)
 
 void set_servo_pos(unsigned degrees)
 {
-	//Set Match Register Value, adjusting pulse width
+	count = min;
+	count += calculateDeltaCount(degrees);
 	
-	//(((320,000 - 12,000) / 5) - counter)
-    TIMER1_TBMATCHR_R = (((0x4E200-12000) / 5) - counter);
-	//Prescaler of 4
-    TIMER1_TBPMR_R = 0x4;
+	//Set Match Register Value, adjusting pulse width
+	//(320,000 - counter)
+    TIMER1_TBILR_R = (0x4E200 - count) & 0xFFFF; //Load lower 16 bits into interval load register	
+    TIMER1_TBPR_R = ((0x4E200 - count) >> 16) & 0xFF; //Load upper 8 bits into prescaler register
 	
 	lcd_printf("Position set to %d degrees", degrees);
 	
