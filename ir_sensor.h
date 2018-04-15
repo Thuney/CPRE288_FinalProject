@@ -8,11 +8,20 @@
 #ifndef IR_SENSOR_H_
 #define IR_SENSOR_H_
 
-#include "Timer.h"
-#include "lcd.h"
+#include <inc/tm4c123gh6pm.h>
+#include <stdint.h>
 
-void Sensor_init();
+/*
+ * Initialize IR sensor and relevant components
+ * Uses:
+ *  GPIO Port B Pin 4 as ADC
+ *  ADC0 for sample conversions
+ */
+void ir_init(void);
 
-unsigned Sensor_reader(void);
+/*
+ * Read a distance value from the IR sensor
+ */
+unsigned read_ir(void);
 
 #endif /* IR_SENSOR_H_ */

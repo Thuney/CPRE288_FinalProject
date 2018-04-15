@@ -40,7 +40,7 @@ void move_servo(int degrees);
 /*
  * Set the servo to a specified (unsigned) degree measurement
  */
-void set_servo(unsigned degrees);
+void set_servo_pos(unsigned degrees);
 
 
 #endif /* SERVO_H_ */

@@ -9,10 +9,10 @@
 #include "servo.h"
 
 //Calibrated values
-int max = 37300;	 	//Match value at theta = 180 degrees
-int mid = 23031;	 	//Match value at theta = 90 degrees
-int min = 8135;		 	//Match value at theta = 0 degrees
-double msPerDegree = 0.006172; 	//Approximately (2.25-0.75)/180 (based on datasheet for servo)
+int max = 36000;	 	//Match value at theta = 180 degrees
+int mid = 24000;	 	//Match value at theta = 90 degrees
+int min = 12000;		 	//Match value at theta = 0 degrees
+double msPerDegree = 0.0083333; 	//Approximately (2.25-0.75)/180 (based on datasheet for servo)
 
 //Store current count and degrees
 double currentDegrees = 0;
@@ -84,17 +84,17 @@ int calculateDeltaCount(double delta_deg)
 void move_servo(int degrees)
 {	
 	//Calculate change in counter value
-	count += calculateDeltaCount(degrees)
+	count += calculateDeltaCount(degrees);
+	//Keep servo in range
 	count = (count > max) ? max : (count < min) ? min : count;
 
     //Set Match Register Value, adjusting pulse width
-	//320,000 - counter
-    TIMER1_TBMATCHR_R = (0x4E200 - counter);
-	//Prescaler of 4
-    TIMER1_TBPMR_R =  = 0x4;
+	//320,000 - count
+	TIMER1_TBMATCHR_R = (0x4E200 - count) & 0xFFFF; //Load lower 16 bits into interval load register
+    TIMER1_TBPMR_R = ((0x4E200 - count) >> 16) & 0xFF; //Load upper 8 bits into prescaler register
 	
     //Update current position in degrees
-    currentDegrees += degree;
+    currentDegrees += degrees;
 
     if (upOrDown == -1)
         lcd_printf("%d count \n%d degrees\ndecrementing", count, (int) currentDegrees);
@@ -107,13 +107,16 @@ void move_servo(int degrees)
 
 void set_servo_pos(unsigned degrees)
 {
+    //Calculate change in counter value
 	count = min;
 	count += calculateDeltaCount(degrees);
+	//Keep servo in range
+	count = (count > max) ? max : (count < min) ? min : count;
 	
 	//Set Match Register Value, adjusting pulse width
 	//(320,000 - counter)
-    TIMER1_TBILR_R = (0x4E200 - count) & 0xFFFF; //Load lower 16 bits into interval load register	
-    TIMER1_TBPR_R = ((0x4E200 - count) >> 16) & 0xFF; //Load upper 8 bits into prescaler register
+	TIMER1_TBMATCHR_R = (0x4E200 - count) & 0xFFFF; //Load lower 16 bits into interval load register
+    TIMER1_TBPMR_R = ((0x4E200 - count) >> 16) & 0xFF; //Load upper 8 bits into prescaler register
 	
 	lcd_printf("Position set to %d degrees", degrees);
 	
