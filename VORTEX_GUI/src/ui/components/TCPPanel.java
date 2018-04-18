@@ -4,11 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.Socket;
 
 public class TCPPanel extends JPanel
 {
-    private JTextField ip_address;
-    private JTextField port_number;
+    private JTextField ip_address, port_number;
+    private Socket tcp_socket = null;
+    private JButton connect_button;
 
     public TCPPanel()
     {
@@ -60,30 +63,22 @@ public class TCPPanel extends JPanel
         constraints.gridx = 1;
 
         //Create button to start TCP connection, binding it to an ActionListener
-        JButton connect = new JButton("Start TCP");
-        add(connect, constraints);
-        connect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                //TODO: input checking
-                start_tcp(get_ip(), get_port());
-            }
-        });
+        connect_button = new JButton("Start TCP");
+        add(connect_button, constraints);
     }
 
-    private String get_ip()
+    public String get_ip()
     {
         return ip_address.getText();
     }
 
-    private String get_port()
+    public String get_port()
     {
         return port_number.getText();
     }
-
-    private void start_tcp(String ip, String port)
+    
+    public JButton getConnectButton()
     {
-        //TODO: TCP connection
+    	return this.connect_button;
     }
 }

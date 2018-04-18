@@ -42,17 +42,6 @@ public class CommandPanel extends JPanel
         JButton sendCommand = new JButton("Send command");
         add(sendCommand, constraints);
 
-        //Bind send command button to action listener
-        sendCommand.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                String command = command_input.getText();
-                command_input.setText("");
-                send_command(command);
-            }
-        });
-
         //Orient
         constraints.gridy = 0;
         constraints.gridx++;
@@ -72,14 +61,14 @@ public class CommandPanel extends JPanel
 
         add(status_window, constraints);
     }
-
-    private void send_command(String command)
+    
+    public String getCommand()
     {
-
+    	return this.command_input.getText();
     }
-
-    public void addToStatusOutput(String info)
+    
+    public JTextArea getStatusArea()
     {
-        status_window.append("\n" + info);
+    	return this.status_window;
     }
 }

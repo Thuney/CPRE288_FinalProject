@@ -7,6 +7,6 @@ public class EnvironmentDisplay extends JPanel
 {
     public EnvironmentDisplay()
     {
-        setBackground(new Color(255, 0, 0));
+        setBackground(new Color(250, 153, 250));
     }
 }

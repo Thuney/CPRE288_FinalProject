@@ -24,7 +24,7 @@ public class SensorPanel extends JPanel
         constraints.anchor = GridBagConstraints.WEST;
 
         //External padding
-        constraints.insets = new Insets(5,0 , 5, 5);
+        constraints.insets = new Insets(5, 0, 5, 5);
 
         //Top left grid
         constraints.gridx = 0;
