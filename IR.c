@@ -86,6 +86,7 @@ float getDistance() {
 }
 
 /*
+
 int main(void){
     lcd_init();
     ir_init();

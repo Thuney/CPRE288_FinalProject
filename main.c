@@ -194,7 +194,7 @@ void point_to_objects()
 }
 
 /**
- * Points to the right side of all objects and sends the angle over UART
+ * clears object array
  * @author Jake Aunan
  * @date April 14,2018
  */
@@ -251,9 +251,7 @@ int get_min()
 
     return minIndex;
 }
-/*
- * Moves the bot and returns distance traveled if there was a valid command
- */
+
 /**
  * Moves the bot and returns the distance traveled if there was a valid command
  * @author Jake Aunan
@@ -263,13 +261,13 @@ int get_min()
  * @param char *command
  * @date April 14, 2018
  */
-int handle_move(char move, oi_t *sensor_data, char *command)
+int handle_input(char move, oi_t *sensor_data, char *command)
 {
     int distance = 0;
 
     //sweep
     //author @Justin Charette (4/14)
-    if(move == '1') {
+    if(move == '5') {
         *command = 1;
     }
     //moves forward..dist
@@ -278,51 +276,49 @@ int handle_move(char move, oi_t *sensor_data, char *command)
         uart_sendStr("forward");
         uart_sendChar('\r');
         uart_sendChar('\n');
-        distance = move_forward(sensor_data, 500);
+        distance = move_forward(sensor_data, 350);
     }
     //moves backward..dist
     else if(move == '2'){
-        *command = 1;
+        //*command = 1;
         uart_sendStr("backward");
         uart_sendChar('\r');
         uart_sendChar('\n');
         distance = move_backward(sensor_data, 200);
     }
-    //turns left 90, then forward..dist
+    //turns left 90
     else if(move == '4'){
         //*command = 1;
-        uart_sendStr("left 90, then forward");
+        uart_sendStr("left 90 degrees");
         uart_sendChar('\r');
         uart_sendChar('\n');
-       // turn_counter_clockwise(sensor_data, 90);
-        distance = move_forward(sensor_data, 200);
+        turn_counter_clockwise(sensor_data, 90);
     }
-    //turns right 90, then forward..dist
+    //turns right 90
     else if(move == '6'){
-        *command = 1;
-        uart_sendStr("right 90, then forward");
+        //*command = 1;
+        uart_sendStr("right 90 degrees");
         uart_sendChar('\r');
         uart_sendChar('\n');
         turn_clockwise(sensor_data, 90);
-        //distance = move_forward(sensor_data, 200);
     }
     //turns left 45, then forward..dist
     else if(move == '7'){
-        *command = 1;
+        //*command = 1;
         uart_sendStr("left 45, then forward");
         uart_sendChar('\r');
         uart_sendChar('\n');
         turn_counter_clockwise(sensor_data, 45);
-       // distance = move_forward(sensor_data, 200);
+        distance = move_forward(sensor_data, 500);
     }
     //turns right 45, then forward..dist
     else if(move == '9'){
-        *command = 1;
+        //*command = 1;
         uart_sendStr("right 45, then forward");
         uart_sendChar('\r');
         uart_sendChar('\n');
         turn_clockwise(sensor_data, 45);
-       // distance = move_forward(sensor_data, 200);
+        distance = move_forward(sensor_data, 500);
     }
     return distance;
 }
@@ -337,9 +333,6 @@ int handle_move(char move, oi_t *sensor_data, char *command)
  *
  * ALL CALIBRATION FOR BOT 13
  *
- */
-/**
- * Runs the rob by using commands from UART and data from all the sensors
  * @author Jake Aunan
  * @author Ryan Goluchh
  * @author Bryan Kalkhoff
@@ -376,7 +369,7 @@ int main(void)
     while(1)
     {
         move = uart_receive(); //holds move command
-        distance = handle_move(move, sensor_data, &command); //attempts to move bot with character sent over
+        distance = handle_input(move, sensor_data, &command); //attempts to move bot with character sent over
 
         //performs a sweep and sends data if a move was made from a valid command
         if(command == 1){

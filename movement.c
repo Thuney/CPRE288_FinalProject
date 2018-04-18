@@ -31,70 +31,73 @@
 int move_forward(oi_t *sensor_data, int distance) {
     int sum = 0;
     //oi_setWheels(255,238); //sets wheel speed to 100 mm/s
-    oi_setWheels(155,145);
+    oi_setWheels(124,110);
+    timer_waitMillis(75);
+    oi_setWheels(249,220);
     while(sum<distance){
         oi_update(sensor_data); // updates the data from the sensor
 
         //cliff detection, moves back and stops if detected
         if(sensor_data->cliffFrontLeft)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
         else if(sensor_data->cliffFrontRight)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
         else if(sensor_data->cliffLeft)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
         else if(sensor_data->cliffRight)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
 
         //tape detection, moves back and stops if detected
         else if(sensor_data->cliffFrontRightSignal >2600)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
         else if(sensor_data->cliffFrontLeftSignal>2600)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
         else if(sensor_data->cliffRightSignal>2600)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
         else if(sensor_data->cliffLeftSignal>2600)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
 
         //Bump detection
         else if(sensor_data->bumpLeft == 1)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
 
         else if(sensor_data->bumpRight == 1)
         {
-            sum+=move_backward(sensor_data, 100);
+            sum+=move_backward(sensor_data, 200);
             break;
         }
 
         sum+= sensor_data->distance; // adds new data to the sum of difference
     }
     oi_setWheels(0,0); // stops the robot
+    center_bot_forward(sensor_data);
     return distance;
 }
 
@@ -113,16 +116,18 @@ int move_forward(oi_t *sensor_data, int distance) {
  * @return distance   the distance travled
  * @date April 14, 2018
  */
-int move_backward(oi_t *sensor_data, int distance) {
+int move_backward(oi_t *sensor_data, int distance)
+{
     int sum = 0;
     distance = 0-distance;
-    oi_setWheels(-250,-250);
+    oi_setWheels(-249,-220);
     while(sum>distance){
         oi_update(sensor_data); // updates the data from the sensor
 
         sum+= sensor_data->distance; // adds new data to the sum of difference
     }
     oi_setWheels(0,0); // stops the robot
+    center_bot_backward(sensor_data);
     return distance;
 }
 /**
@@ -135,7 +140,8 @@ int move_backward(oi_t *sensor_data, int distance) {
  * @date April 14, 2018
  *
  */
-void turn_counter_clockwise(oi_t *sensor_data, int degrees) {
+void turn_counter_clockwise(oi_t *sensor_data, int degrees)
+{
     int angle = 0;
     oi_setWheels(300,-300);
     while(angle<(degrees)){ //calibrate?
@@ -153,7 +159,8 @@ void turn_counter_clockwise(oi_t *sensor_data, int degrees) {
  * @param int distance
  * @date April 14, 2018
  */
-void turn_clockwise(oi_t *sensor_data, int degrees) {
+void turn_clockwise(oi_t *sensor_data, int degrees)
+{
     int angle = 0;
     degrees = 0-degrees;
     oi_setWheels(-300,300);
@@ -162,4 +169,30 @@ void turn_clockwise(oi_t *sensor_data, int degrees) {
         angle+= sensor_data->angle; // adds new data to the sum of difference
     }
     oi_setWheels(0,0); // stops the robot
+}
+
+void center_bot_forward(oi_t *sensor_data)
+{
+    int degrees = -4;
+    int angle = 0;
+    oi_setWheels(-17, 17);
+    while (angle > (degrees))
+    { //calibrate?
+        oi_update(sensor_data); // updates the data from the sensor
+        angle += sensor_data->angle; // adds new data to the sum of difference
+    }
+    oi_setWheels(0, 0); // stops the robot
+}
+
+void center_bot_backward(oi_t *sensor_data)
+{
+    int degrees = 4;
+    int angle = 0;
+    oi_setWheels(17, -17);
+    while (angle < (degrees))
+    { //calibrate?
+        oi_update(sensor_data); // updates the data from the sensor
+        angle += sensor_data->angle; // adds new data to the sum of difference
+    }
+    oi_setWheels(0, 0); // stops the robot
 }
