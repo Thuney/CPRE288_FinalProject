@@ -19,9 +19,6 @@ void ir_init(void)
 	//Enable alternate function on GPIO Port B Pin 4
     GPIO_PORTB_AFSEL_R |= 0x10; //0b0001_0000
 	
-	//Set Port B Pin 4 as input
-    GPIO_PORTB_DIR_R &= ~(0x10);
-	
 	//Disable Port B Pin 4 as digital pin
     GPIO_PORTB_DEN_R &= ~(0x10);
 	
@@ -38,9 +35,9 @@ void ir_init(void)
      * ADC0
      */
 
-    //Enable system clock to ADC 0
+	//Enable system clock to ADC 0
     SYSCTL_RCGCADC_R |= 0x1;
-
+	
     //Disable ADC0 Sample Sequencer 1 for configuration
     ADC0_ACTSS_R &= ~ADC_ACTSS_ASEN1;
 
