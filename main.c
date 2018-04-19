@@ -41,6 +41,37 @@ int sonar_Distance[91];
 struct object objects[10];
 
 
+/*
+ *does  something with sound
+ */
+void load_song(){
+    unsigned char song[] = {55, 65};
+    unsigned char songDuration[] = {15, 30};
+    oi_loadSong(1, 2, song, songDuration);
+}
+
+/**
+ * testing function
+ *
+ */
+/*void load_spaceJAM(){
+    unsigned char spaceJam[] = {59, 57, 59, 59, 61, 62, 57, 59, 57, 59, 57, 0, 57, 57, 57, 57, 57, 59, 59, 57, 57, 57, 59, 57, 59, 57, 57, 59, 59, 54, 57, 59, 59, 54, 57, 59, 59, 61, 59, 57};
+    unsigned char spaceJamDuration[] = {12, 12, 12, 12, 12, 24, 12, 12, 12, 24, 24, 12, 12, 12, 12, 24, 24, 12, 12, 24, 12, 12, 12, 12, 24, 48, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 24, 72, 12, 24};
+    oi_loadSong(1, 40, spaceJam, spaceJamDuration);
+}*/
+
+/**
+ * Plays the song that was loaded to open interface.
+ * @author Justin Charette
+ * @author Bryan Kalkhoff
+ * @date April 18, 2018
+ */
+void play_song(){
+    oi_play_song(1);
+}
+
+
+
 
 /*
  * lab 9 functions and such
