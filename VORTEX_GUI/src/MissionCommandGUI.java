@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 
 import ui.components.*;
@@ -34,9 +33,10 @@ public class MissionCommandGUI extends JFrame
 
         GridBagConstraints constraints = new GridBagConstraints();
 
-        constraints.gridx = 0;
+        constraints.gridx = 0;  
         constraints.gridy = 0;
-        
+
+        //Margins
         constraints.insets = new Insets(5, 5, 5, 5);
 
         //Left align components
@@ -52,6 +52,8 @@ public class MissionCommandGUI extends JFrame
         
         constraints.gridwidth = 2;
         constraints.gridheight = 2;
+
+        environment.setBorder(BorderFactory.createLineBorder(new Color(0,0,0)));
 
         contentPane.add(environment, constraints);
         
@@ -104,7 +106,7 @@ public class MissionCommandGUI extends JFrame
     
     public TCPPanel getTCPPanel()
     {
-    	return this.getTCPPanel();
+    	return this.tcp;
     }
     
     public SensorPanel getSensorPanel()

@@ -2,14 +2,14 @@ package ui.components;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class CommandPanel extends JPanel
 {
     private JTextField command_input;
 
     private JTextArea status_window;
+
+    private JButton send_command_button;
 
     public CommandPanel()
     {
@@ -27,7 +27,7 @@ public class CommandPanel extends JPanel
 
         //Top left grid
         constraints.gridx = 0;
-        constraints.gridy = 1;
+        constraints.gridy = 0;
 
         //Left align
         constraints.anchor = GridBagConstraints.WEST;
@@ -39,8 +39,8 @@ public class CommandPanel extends JPanel
         constraints.gridx++;
 
         //Send command button
-        JButton sendCommand = new JButton("Send command");
-        add(sendCommand, constraints);
+        send_command_button = new JButton("Send command");
+        add(send_command_button, constraints);
 
         //Orient
         constraints.gridy = 0;
@@ -56,7 +56,7 @@ public class CommandPanel extends JPanel
         add(new JLabel("Status Window"), constraints);
         constraints.gridy++;
 
-        status_window = new JTextArea(8, 20);
+        status_window = new JTextArea(8, 30);
         status_window.setBorder(BorderFactory.createLineBorder(new Color(0,0,0)));
 
         add(status_window, constraints);
@@ -67,8 +67,18 @@ public class CommandPanel extends JPanel
     	return this.command_input.getText();
     }
     
+    public JTextField getCommandField()
+    {
+        return this.command_input;
+    }
+
     public JTextArea getStatusArea()
     {
     	return this.status_window;
+    }
+
+    public JButton getSendCommandButton()
+    {
+        return send_command_button;
     }
 }
