@@ -2,7 +2,10 @@ import data.Obstacle;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Random;
@@ -11,6 +14,8 @@ public class MissionCommand
 {
 	private MissionCommandGUI gui;
 	private Socket tcp_socket = null;
+	private BufferedReader cybot_in;
+	private PrintWriter cybot_out;
 	
 	public MissionCommand()
 	{
@@ -50,13 +55,29 @@ public class MissionCommand
 	private void start_tcp(String ip, int port) throws UnknownHostException, IOException
     {
     	this.tcp_socket = new Socket(ip, port);
+    	if(tcp_socket.isConnected())
+    	{
+    		cybot_out = new PrintWriter(tcp_socket.getOutputStream());
+    		cybot_in = new BufferedReader(new InputStreamReader(tcp_socket.getInputStream()));
+    		addToStatusOutput("TCP Connection Established with CyBot");
+    	}
     }
 	
 	public void send_command()
     {
 		String command = gui.getCommandPanel().getCommand();
         gui.getCommandPanel().getCommandField().setText("");
-        addToStatusOutput("Sent command to robot : " + command);
+        if(cybot_out != null)
+        {
+        	cybot_out.print(command);
+        	cybot_out.flush();
+//        	cybot_out.print("\r");
+        	addToStatusOutput("Sent command to robot : " + command);
+        }
+        else
+        {
+        	addToStatusOutput("TCP connection not established with CyBot");
+        }
     }
 
     public void addToStatusOutput(String info)
