@@ -1,3 +1,5 @@
+package vortex;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -117,5 +119,10 @@ public class MissionCommandGUI extends JFrame
     public CommandPanel getCommandPanel()
     {
     	return this.command_panel;
+    }
+
+    public void addToStatusOutput(String info)
+    {
+        command_panel.getStatusArea().append("\n" + info);
     }
 }

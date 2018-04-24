@@ -2,15 +2,10 @@ package ui.components;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.Socket;
 
 public class TCPPanel extends JPanel
 {
     private JTextField ip_address, port_number;
-    private Socket tcp_socket = null;
     private JButton connect_button;
 
     public TCPPanel()

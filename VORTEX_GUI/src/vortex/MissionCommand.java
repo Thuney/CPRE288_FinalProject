@@ -1,0 +1,83 @@
+package vortex;
+
+import communication.CybotClient;
+import data.Obstacle;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Random;
+
+public class MissionCommand
+{
+	private MissionCommandGUI gui;
+	private CybotClient cybot_client;
+	
+	public MissionCommand()
+	{
+		gui = new MissionCommandGUI();
+        gui.init_ui();
+        gui.setVisible(true);
+
+        gui.getTCPPanel().getConnectButton().addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String ip = gui.getTCPPanel().get_ip();
+                int port_number = Integer.parseInt(gui.getTCPPanel().get_port());
+                try
+                {
+                    open_tcp_client_connection(ip, port_number);
+                }
+                catch (IOException e1)
+                {
+                    gui.addToStatusOutput("Could not connect to " + ip + " : " + port_number);
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        gui.getCommandPanel().getSendCommandButton().addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                cybot_client.send_command();
+            }
+        });
+	}
+	
+	private void open_tcp_client_connection(String ip, int port) throws UnknownHostException, IOException
+    {
+    	this.cybot_client = new CybotClient(ip, port, gui);
+    	if(cybot_client.isConnected())
+    	{
+    		gui.addToStatusOutput("TCP Connection Established with CyBot");
+    	}
+    }
+
+    public static void main(String[] args)
+    {
+        MissionCommand vortex = new MissionCommand();
+
+//        Obstacle[] obstacles = new Obstacle[9];
+//
+//        Random r = new Random();
+//
+//        obstacles[0] = new Obstacle(10, r.nextInt(20) + 30);
+//        obstacles[1] = new Obstacle(30, r.nextInt(20) + 30);
+//        obstacles[2] = new Obstacle(50, r.nextInt(20) + 30);
+//        obstacles[3] = new Obstacle(70, r.nextInt(20) + 30);
+//        obstacles[4] = new Obstacle(90, r.nextInt(20) + 30);
+//        obstacles[5] = new Obstacle(110, r.nextInt(20) + 30);
+//        obstacles[6] = new Obstacle(130, r.nextInt(20) + 30);
+//        obstacles[7] = new Obstacle(150, r.nextInt(20) + 30);
+//        obstacles[8] = new Obstacle(170, r.nextInt(20) + 30);
+//
+//        vortex.gui.getEnvironment().setObstacles(obstacles);
+//
+//        vortex.gui.revalidate();
+    }
+}
