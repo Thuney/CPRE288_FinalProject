@@ -65,13 +65,13 @@ public class MissionCommand
 	
 	public void send_command()
     {
-		String command = gui.getCommandPanel().getCommand();
-        gui.getCommandPanel().getCommandField().setText("");
         if(cybot_out != null)
         {
+            String command = gui.getCommandPanel().getCommand();
+            gui.getCommandPanel().getCommandField().setText("");
+
         	cybot_out.print(command);
         	cybot_out.flush();
-//        	cybot_out.print("\r");
         	addToStatusOutput("Sent command to robot : " + command);
         }
         else
@@ -93,15 +93,15 @@ public class MissionCommand
 
         Random r = new Random();
 
-        obstacles[0] = new Obstacle(10, r.nextInt(300) + 100);
-        obstacles[1] = new Obstacle(30, r.nextInt(300) + 100);
-        obstacles[2] = new Obstacle(50, r.nextInt(300) + 100);
-        obstacles[3] = new Obstacle(70, r.nextInt(300) + 100);
-        obstacles[4] = new Obstacle(90, r.nextInt(300) + 100);
-        obstacles[5] = new Obstacle(110, r.nextInt(300) + 100);
-        obstacles[6] = new Obstacle(130, r.nextInt(300) + 100);
-        obstacles[7] = new Obstacle(150, r.nextInt(300) + 100);
-        obstacles[8] = new Obstacle(170, r.nextInt(300) + 100);
+        obstacles[0] = new Obstacle(10, r.nextInt(20) + 30);
+        obstacles[1] = new Obstacle(30, r.nextInt(20) + 30);
+        obstacles[2] = new Obstacle(50, r.nextInt(20) + 30);
+        obstacles[3] = new Obstacle(70, r.nextInt(20) + 30);
+        obstacles[4] = new Obstacle(90, r.nextInt(20) + 30);
+        obstacles[5] = new Obstacle(110, r.nextInt(20) + 30);
+        obstacles[6] = new Obstacle(130, r.nextInt(20) + 30);
+        obstacles[7] = new Obstacle(150, r.nextInt(20) + 30);
+        obstacles[8] = new Obstacle(170, r.nextInt(20) + 30);
 
         vortex.gui.getEnvironment().setObstacles(obstacles);
 

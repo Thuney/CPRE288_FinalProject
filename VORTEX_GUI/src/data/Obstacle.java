@@ -2,17 +2,17 @@ package data;
 
 public class Obstacle
 {
-    private int angle, dist, x, y;
+    private int angle, dist_cm, x, y;
 
-    public Obstacle(int angle, int dist)
+    public Obstacle(int angle, int dist_cm)
     {
         this.angle = angle;
-        this.dist = dist;
+        this.dist_cm = dist_cm;
 
-        double angleRadians = angle * (Math.PI/180);
+        double angleRadians = getAngleRadians();
 
-        this.x = (int) (dist * (Math.cos(angleRadians)));
-        this.y = (int) (dist * (Math.sin(angleRadians)));
+        this.x = (int) (dist_cm * (Math.cos(angleRadians)));
+        this.y = (int) (dist_cm * (Math.sin(angleRadians)));
     }
 
     public int getAngle()
@@ -20,9 +20,14 @@ public class Obstacle
         return angle;
     }
 
+    public double getAngleRadians()
+    {
+        return ((double) (this.angle * (Math.PI/180)));
+    }
+
     public int getDist()
     {
-        return dist;
+        return dist_cm;
     }
 
     public int getXComponent()
