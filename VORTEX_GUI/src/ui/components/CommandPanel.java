@@ -57,9 +57,10 @@ public class CommandPanel extends JPanel
         constraints.gridy++;
 
         status_window = new JTextArea(8, 30);
+        JScrollPane scroll_pane = new JScrollPane(status_window);
         status_window.setBorder(BorderFactory.createLineBorder(new Color(0,0,0)));
 
-        add(status_window, constraints);
+        add(scroll_pane, constraints);
     }
     
     public String getCommand()

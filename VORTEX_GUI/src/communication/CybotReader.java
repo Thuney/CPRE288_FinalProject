@@ -1,7 +1,7 @@
 package communication;
 
 import data.Obstacle;
-import vortex.MissionCommandGUI;
+import ui.components.MissionCommandGUI;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,6 +67,8 @@ public class CybotReader implements Runnable
             obstacles.add(new Obstacle(Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1])));
         }
 
-        return (Obstacle[]) obstacles.toArray();
+        Obstacle[] o = new Obstacle[obstacles.size()];
+        obstacles.toArray(o);
+        return o;
     }
 }
