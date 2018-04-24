@@ -33,7 +33,7 @@ int move_forward(oi_t *sensor_data, int distance) {
     //oi_setWheels(255,238); //sets wheel speed to 100 mm/s
     oi_setWheels(124,110);
     timer_waitMillis(75);
-    oi_setWheels(249,220);
+    oi_setWheels(257,240);
     while(sum<distance){
         oi_update(sensor_data); // updates the data from the sensor
 
@@ -97,7 +97,7 @@ int move_forward(oi_t *sensor_data, int distance) {
         sum+= sensor_data->distance; // adds new data to the sum of difference
     }
     oi_setWheels(0,0); // stops the robot
-    center_bot_forward(sensor_data);
+    //center_bot_forward(sensor_data);
     return distance;
 }
 
@@ -120,14 +120,14 @@ int move_backward(oi_t *sensor_data, int distance)
 {
     int sum = 0;
     distance = 0-distance;
-    oi_setWheels(-249,-220);
+    oi_setWheels(-257,-240);
     while(sum>distance){
         oi_update(sensor_data); // updates the data from the sensor
 
         sum+= sensor_data->distance; // adds new data to the sum of difference
     }
     oi_setWheels(0,0); // stops the robot
-    center_bot_backward(sensor_data);
+    //center_bot_backward(sensor_data);
     return distance;
 }
 /**
@@ -143,11 +143,13 @@ int move_backward(oi_t *sensor_data, int distance)
 void turn_counter_clockwise(oi_t *sensor_data, int degrees)
 {
     int angle = 0;
-    oi_setWheels(300,-300);
-    while(angle<(degrees)){ //calibrate?
-        oi_update(sensor_data); // updates the data from the sensor
-        angle+= sensor_data->angle; // adds new data to the sum of difference
-    }
+    oi_setWheels(250,-239);
+
+    timer_waitMillis(740);
+//    while(angle<(degrees)){ //calibrate?
+//        oi_update(sensor_data); // updates the data from the sensor
+//        angle+= sensor_data->angle; // adds new data to the sum of difference
+//    }
     oi_setWheels(0,0); // stops the robot
 }
 /**
@@ -163,11 +165,13 @@ void turn_clockwise(oi_t *sensor_data, int degrees)
 {
     int angle = 0;
     degrees = 0-degrees;
-    oi_setWheels(-300,300);
-    while(angle>(degrees)){ //calibrate?
-        oi_update(sensor_data); // updates the data from the sensor
-        angle+= sensor_data->angle; // adds new data to the sum of difference
-    }
+    oi_setWheels(-250,250);
+
+    timer_waitMillis(740);
+//    while(angle>(degrees)){ //calibrate?
+//        oi_update(sensor_data); // updates the data from the sensor
+//        angle+= sensor_data->angle; // adds new data to the sum of difference
+//    }
     oi_setWheels(0,0); // stops the robot
 }
 

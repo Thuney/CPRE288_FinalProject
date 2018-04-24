@@ -100,19 +100,19 @@ void sweep() {
 
         lcd_printf("angle: %d\nIR: %d\nPing: %d", total, ir_distance[i],sonar_Distance[i]);
 
-//        //stores values as strings for UART
-//        sprintf(irARR, "%4d", ir_distance[i]);
-//        sprintf(sonarARR, "%4d", sonar_Distance[i]);
-//        sprintf(totalARR, "%4d", total);
-//
-//        //sends data over UART
-//        uart_sendStr(totalARR);
-//        uart_sendStr("                 ");
-//        uart_sendStr(irARR);
-//        uart_sendStr("                   ");
-//        uart_sendStr(sonarARR);
-//        uart_sendChar('\r');
-//        uart_sendChar('\n');
+        //stores values as strings for UART
+        sprintf(irARR, "%4d", ir_distance[i]);
+        sprintf(sonarARR, "%4d", sonar_Distance[i]);
+        sprintf(totalARR, "%4d", total);
+
+        //sends data over UART
+        uart_sendStr(totalARR);
+        uart_sendStr("                 ");
+        uart_sendStr(irARR);
+        uart_sendStr("                   ");
+        uart_sendStr(sonarARR);
+        uart_sendChar('\r');
+        uart_sendChar('\n');
 
         total = total + 2;
         i++;
@@ -164,7 +164,7 @@ int get_objects()
                 check = 1;
             }
         }
-        else if((ir_distance[index]>60) && (check == 1))
+        else if((ir_distance[index]>=70) && (check == 1))
         {
             objects[objectCount].leftSideAngle = (index*2);
             objectCount++;
@@ -212,13 +212,13 @@ void point_to_objects()
             move_servo(objects[i].rightSideAngle);
 
             //debug stuff
-            //            lcd_printf("%d", objects[i].rightSideAngle);
-            //            char print[50];
-            //            sprintf(print, "%d", objects[i].rightSideAngle);
-            //            uart_sendChar('\r');
-            //            uart_sendChar('\n');
-            //            uart_sendStr("object angle: ");
-            //            uart_sendStr(print);
+//            lcd_printf("%d", objects[i].rightSideAngle);
+//            char print[50];
+//            sprintf(print, "%d", objects[i].rightSideAngle);
+//            uart_sendChar('\r');
+//            uart_sendChar('\n');
+//            uart_sendStr("object angle: ");
+//            uart_sendStr(print);
             timer_waitMillis(1500);
         }
     }
@@ -331,7 +331,7 @@ int handle_input(char move, oi_t *sensor_data, char *command)
         uart_sendStr("right 90 degrees");
         uart_sendChar('\r');
         uart_sendChar('\n');
-        turn_clockwise(sensor_data, 90);
+        turn_clockwise(sensor_data, 87);
     }
     //turns left 45, then forward..dist
     else if(move == '7'){
@@ -352,6 +352,18 @@ int handle_input(char move, oi_t *sensor_data, char *command)
         distance = move_forward(sensor_data, 500);
     }
     return distance;
+}
+
+/**
+ * This function computes the distance between objects to
+ * help check if we are in the goal zone since the distance between
+ * all 4 pillars in the goal zone is ~61 cm.
+ *
+ * @author Ryan Goluch
+ */
+int compute_dist_between_obj()
+{
+
 }
 
 /**
@@ -418,7 +430,7 @@ int main(void)
             //point_to_objects();//debugging
             command = 0; //sets command back to 0 so it does not continually sweep
 
-            void clear_objects();
+            clear_objects();
         }
     }
 }
