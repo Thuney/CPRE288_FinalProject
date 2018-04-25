@@ -4,6 +4,11 @@ public class Obstacle
 {
     private int angle, dist_cm, x, y;
 
+    /**
+     * Object to store information about detected obstacles
+     * @param angle
+     * @param dist_cm
+     */
     public Obstacle(int angle, int dist_cm)
     {
         this.angle = angle;

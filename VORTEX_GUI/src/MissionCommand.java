@@ -17,10 +17,12 @@ public class MissionCommand
 	
 	public MissionCommand()
 	{
+		//Construction of GUI
 		gui = new MissionCommandGUI();
         gui.init_ui();
         gui.setVisible(true);
 
+        //Listener for TCP connection button event
         gui.getTCPPanel().getConnectButton().addActionListener(new ActionListener()
         {
             @Override
@@ -40,6 +42,7 @@ public class MissionCommand
             }
         });
 
+        //Listener for 'Send Command' button event
         gui.getCommandPanel().getSendCommandButton().addActionListener(new ActionListener()
         {
             @Override
@@ -50,11 +53,15 @@ public class MissionCommand
         });
 	}
 	
+	/*
+	 * Constructs a CybotClient object, which acts as a TCP connection to the robot UART
+	 */
 	private void open_tcp_client_connection(String ip, int port) throws UnknownHostException, IOException
     {
     	this.cybot_client = new CybotClient(ip, port, gui);
     	if(cybot_client.isConnected())
     	{
+    		//Print to status output, indicating connected status
     		gui.addToStatusOutput("TCP Connection Established with CyBot");
     	}
     }

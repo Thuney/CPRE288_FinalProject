@@ -14,6 +14,15 @@ public class CybotClient extends Socket
     private Thread cybot_input_processing_thread;
     private MissionCommandGUI gui;
 
+    /**
+     * Cybot TCP Client connection
+     * 
+     * Starts a background thread for processing signals from the bot
+     * @param ip IP address to connect to
+     * @param port Port to connect to
+     * @param gui Reference to GUI for relaying data
+     * @throws IOException
+     */
     public CybotClient(String ip, int port, MissionCommandGUI gui) throws IOException
     {
         super(ip, port);
@@ -24,6 +33,9 @@ public class CybotClient extends Socket
         this.gui = gui;
     }
 
+    /**
+     * Sends the contents of the command text field to the robot
+     */
     public void send_command()
     {
         if(cybot_out != null)
@@ -41,6 +53,11 @@ public class CybotClient extends Socket
         }
     }
 
+    /**
+     * Puts the robot signal reading thread to sleep for the designated number of milliseconds
+     * @param millis
+     * @throws InterruptedException
+     */
     public void sleep_cybot_input(long millis) throws InterruptedException
     {
         this.cybot_input_processing_thread.sleep(millis);

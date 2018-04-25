@@ -12,6 +12,11 @@ public class CybotReader implements Runnable
     private MissionCommandGUI gui;
     private BufferedReader input_stream;
 
+    /**
+     * A runnable object that constantly reads available input from the CyBot
+     * @param input_stream
+     * @param gui
+     */
     public CybotReader(BufferedReader input_stream, MissionCommandGUI gui)
     {
         this.input_stream = input_stream;
@@ -37,6 +42,10 @@ public class CybotReader implements Runnable
         }
     }
 
+    /**
+     * Handles the next line of input
+     * @throws IOException
+     */
     private void handle_input() throws IOException
     {
         String nextLine = input_stream.readLine();
@@ -47,10 +56,21 @@ public class CybotReader implements Runnable
                 gui.addToStatusOutput(nextLine);
                 gui.getEnvironment().setObstacles(read_obstacle_data(input_stream));
                 gui.getEnvironment().repaint();
+                break;
+            }
+            default:
+            {
+            	gui.addToStatusOutput(nextLine);
             }
         }
     }
 
+    /**
+     * Creates new Obstacle objects for each detected object, then returns that array to the Environment display for drawing
+     * @param input_stream Stream to collect obstacles from
+     * @return
+     * @throws IOException
+     */
     private Obstacle[] read_obstacle_data(BufferedReader input_stream) throws IOException
     {
         ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>(0);
@@ -63,6 +83,7 @@ public class CybotReader implements Runnable
 
             if(input.equals("..Finished")) break;
 
+            //Regular expression to separate digits from the string
             String[] numbers = input.replaceAll("^\\D+","").split("\\D+");
             obstacles.add(new Obstacle(Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1])));
         }
