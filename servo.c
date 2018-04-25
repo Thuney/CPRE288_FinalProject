@@ -1,125 +1,94 @@
 /**
- *
- * 	@file  servo.c
- *
- *   @author Jonathan Novak
- *
+ *   @file servo.c
+ *   @brief This file contains the methods necessary to operate the servo.
+ *   @author Justin Charette
+ *   @author Bryan Kalkhoff
+ *   @date April 14, 2018
  */
 
-#include "servo.h"
+#include "Servo.h"
+#include "lcd.h"
+#include "timer.h"
+#include <inc/tm4c123gh6pm.h>
 
-//Calibrated values
-int max = 36000;	 	//Match value at theta = 180 degrees
-int mid = 24000;	 	//Match value at theta = 90 degrees
-int min = 12000;		 	//Match value at theta = 0 degrees
-double msPerDegree = 0.0083333; 	//Approximately (2.25-0.75)/180 (based on datasheet for servo)
+/**
+ * This method initiates the servo operations.
+ * @author Justin Charette
+ * @author Bryan Kalkhoff
+ * @date April 14, 2018
+ */
+void servo_init(){
+    //INIT PORT B: GPIO PB5, turn on clk, alt. function, output, enable
+    SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R1;
 
-//Store current count and degrees
-double currentDegrees = 0;
-int count = 0;
+    //alt. function
+    GPIO_PORTB_AFSEL_R |= BIT5;
+    GPIO_PORTB_PCTL_R |= 0x700000;
 
-int upOrDown = 1; //1 if up, -1 if down
+    //set as outputs
+    GPIO_PORTB_DIR_R |= BIT5;
 
-void servo_init()
-{
-	/*
-	 *    GPTMCTL – Control
-	 *    GPTMCFG – Configuration
-	 *    GPTMTnMR – Timer n mode
-	 *    GPTMTnPR – Timer n prescale / 8 bits PWM
-	 *    GPTMTnILR – Timer n interval load
-	 *    GPTMTnPMR – Timer n prescale match
-	 *    GPTMTnMATCHR – Timer n match
-	 *    GPTMIMR – Interrupt mask
-	 *    GPTMRIS – Raw interrupt status
-	 *    GPTMICR – Interrupt clear
-	 */
+    //digital enable
+    GPIO_PORTB_DEN_R |= BIT5;
 
-	//Enable system clock for Port B
-    SYSCTL_RCGCGPIO_R |= 0x2; //0b0010
-	
-    //Enable alternate function on Port B Pin 5
-    GPIO_PORTB_AFSEL_R |= 0x20; //0b0010_0000
-	
-    //Enable T1CCP1 (Timer 1) on Port B
-    GPIO_PORTB_PCTL_R |= 0x00700000;
-	
-    //Set Port B Pin 5 as output
-    GPIO_PORTB_DIR_R |= 0x20; //0b0010_0000
-	
-    //Enable PB5 as digital pin
-    GPIO_PORTB_DEN_R |= 0x20; //0b0010_0000
-	
-    //Enable system clock to Timer 1
-    SYSCTL_RCGCTIMER_R |= 0x02; //0b0000_0010
-	
-	//Disable Timer1B for configuration
-    TIMER1_CTL_R &= ~(0x00000100);
-	
-	//Set as 16-bit timer
-    TIMER1_CFG_R |= 0x4; //0b0000_0100
-	
-    //PWM enable
-    TIMER1_TBMR_R = TIMER_TBMR_TBMR_PERIOD | TIMER_TBMR_TBAMS;
-	
-    //20 ms period is 320,000 cycles
-	
-	//0x4E200 = 320,000 (base 10)
-	//Timer in PWM mode acts as a 24-bit counter, with prescaler as the upper 8 bits
-    TIMER1_TBILR_R = 0x4E200 & 0xFFFF; //Load lower 16 bits into interval load register
-    TIMER1_TBPR_R = (0x4E200 >> 16) & 0xFF; //Load upper 8 bits into prescaler register
-	
-	//Move servo to default position
-    set_servo_pos(90);
-	
-	//enable Timer1B
-    TIMER1_CTL_R |= 0x00000100;
+    //CONFIGURE TIMER
+    //turn on clk for timer1
+    SYSCTL_RCGCTIMER_R |= SYSCTL_RCGCTIMER_R1;
+
+    //disable timer to config
+    TIMER1_CTL_R &= ~(TIMER_CTL_TBEN);
+
+    //set size of timer to 16
+    TIMER1_CFG_R |= TIMER_CFG_16_BIT;
+
+    //periodic and PWM enable
+    TIMER1_TBMR_R |= (TIMER_TBMR_TBMR_PERIOD | TIMER_TBMR_TBAMS);
+    TIMER1_TBMR_R &= ~(TIMER_TBMR_TBCMR);
+
+    //set to non-inverted PWM mode
+    TIMER1_CTL_R &= ~(TIMER_CTL_TBPWML);
+
+    // set lower 16 bits of interval
+    TIMER1_TBILR_R |= (320000 & 0xFFFF);
+
+    //set upper 8 bits of interval
+    TIMER1_TBPR_R |= (320000 >> 16);
+
+    pulse_width = 0;
+    move_servo(pulse_width);
+
+    // set lower 16 bits of pulse width
+    TIMER1_TBMATCHR_R |= ((320000 - pulse_width) & 0xFFFF);
+
+    //set upper 8 bits of pulse width
+    TIMER1_TBPMR_R |= ((320000- pulse_width) >> 16);
+
+    //enable timer
+    TIMER1_CTL_R |= TIMER_CTL_TBEN;
 }
 
-int calculateDeltaCount(double delta_deg)
-{
-    return (((msPerDegree*delta_deg)/20)*320000);
+/**
+ *
+ *   This method moves the servo.
+ *   @param degree   The degree to move the servo to
+ *   @author Justin Charette
+ *   @author Bryan Kalkhoff
+ *   @date April 15,2018
+ */
+void move_servo(float degree){
+    /*
+     * April 14, 2018 changed the formula to what it is now  to increase the accuracy to the servo
+     * Bryan Kalkhoff
+     */
+    pulse_width = ((27500 * (degree/180.0)));
+
+    //set lower 16 bits of pulse width
+    TIMER1_TBMATCHR_R = ((320000 - pulse_width) & 0xFFFF);
+
+    //set the upper 8 bits of the pulse width
+    TIMER1_TBPMR_R |= ((320000 - pulse_width) >> 16);
+
+    //Delay for the servo to move to the position
+    timer_waitMillis(40);
 }
 
-void move_servo(int degrees)
-{	
-	//Calculate change in counter value
-	count += calculateDeltaCount(degrees);
-	//Keep servo in range
-	count = (count > max) ? max : (count < min) ? min : count;
-
-    //Set Match Register Value, adjusting pulse width
-	//320,000 - count
-	TIMER1_TBMATCHR_R = (0x4E200 - count) & 0xFFFF; //Load lower 16 bits into interval load register
-    TIMER1_TBPMR_R = ((0x4E200 - count) >> 16) & 0xFF; //Load upper 8 bits into prescaler register
-	
-    //Update current position in degrees
-    currentDegrees += degrees;
-
-    if (upOrDown == -1)
-        lcd_printf("%d count \n%d degrees\ndecrementing", count, (int) currentDegrees);
-    else
-        lcd_printf("%d count \n%d degrees\nincrementing", count, (int) currentDegrees);
-	
-	//Wait for servo to move
-    timer_waitMillis(300);
-}
-
-void set_servo_pos(unsigned degrees)
-{
-    //Calculate change in counter value
-	count = min;
-	count += calculateDeltaCount(degrees);
-	//Keep servo in range
-	count = (count > max) ? max : (count < min) ? min : count;
-	
-	//Set Match Register Value, adjusting pulse width
-	//(320,000 - counter)
-	TIMER1_TBMATCHR_R = (0x4E200 - count) & 0xFFFF; //Load lower 16 bits into interval load register
-    TIMER1_TBPMR_R = ((0x4E200 - count) >> 16) & 0xFF; //Load upper 8 bits into prescaler register
-	
-	lcd_printf("Position set to %d degrees", degrees);
-	
-	//Wait for servo to move
-    timer_waitMillis(300);
-}
