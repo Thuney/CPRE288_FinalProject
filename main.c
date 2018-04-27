@@ -34,8 +34,8 @@ struct object
 };
 
 //stores values from the sensors
-int g_ir_distance[91];
-int g_sonar_Distance[91];
+int ir_distance[91];
+int sonar_Distance[91];
 
 //stores objects found
 struct object objects[10];
@@ -82,14 +82,9 @@ void sweep() {
         char sonarARR[100];*/
 
         move_servo(total);
-        g_ir_distance[i] = getDistance();
-        g_sonar_Distance[i]=ping_getDistance();
+        ir_distance[i] = getDistance();
+        sonar_Distance[i]=ping_getDistance();
 
-        /**
-         * The code was moved to a different location in the code to help with readability.
-         * @author Jake Aunan
-         * @date April 25,2018
-         */
         //lcd_printf("angle: %d\nIR: %d\nPing: %d", total, ir_distance[i],sonar_Distance[i]);
 
         //stores values as strings for UART
@@ -146,18 +141,18 @@ int get_objects()
     for(index=1; index<=90; index++)
     {
         //check if IR is valid
-        if(g_ir_distance[index]<70)
+        if(ir_distance[index]<70)
         {
             //check for sonar change (means object)
-            if((abs(g_sonar_Distance[index-1] - g_sonar_Distance[index]) <5) && (check == 0))
+            if((abs(sonar_Distance[index-1] - sonar_Distance[index]) <5) && (check == 0))
             {
                 objects[objectCount].rightSideAngle = (index*2);//sets the angle
                 objects[objectCount].real = 1;//says that there is an object
-                objects[objectCount].distanceCheck = g_sonar_Distance[index];//gets the distance of the object
+                objects[objectCount].distanceCheck = sonar_Distance[index];//gets the distance of the object
                 check = 1;//sets check to be 1
             }
         }
-        else if((g_ir_distance[index]>=70) && (check == 1))//if the sensor is in the middle of an object and the IR is over a certain value
+        else if((ir_distance[index]>=70) && (check == 1))//if the sensor is in the middle of an object and the IR is over a certain value
         {
             objects[objectCount].leftSideAngle = (index*2);//set the left angle
             objectCount++;//add one to objectcount
@@ -439,6 +434,7 @@ int main(void)
     int distance; //distance moved after each command
     char move; //holds the character command sent for movement
     char command = 0; //0 if a command hasn't been issued, 1 if it has. Used to know if it should sweep or not.
+    int objectCount;
 
     //initializes peripherals
     servo_init();
@@ -465,7 +461,7 @@ int main(void)
             uart_sendChar('\r');
             uart_sendChar('\n');
             sweep(); //performs sweep
-            //objectCount = get_objects(); //finds objects based on sweep data
+            objectCount = get_objects(); //finds objects based on sweep data
             //point_to_objects();//debugging
             uart_sendStr("..Finished");
             uart_sendChar('\r');
